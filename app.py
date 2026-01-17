@@ -30,6 +30,7 @@ Chat_Leave = False
 
 app = Flask(__name__)
 
+# FIXED: Updated Header to OB52
 Hr = {
     'User-Agent': "Dalvik/2.1.0 (Linux; U; Android 11; ASUS_Z01QD Build/PI)",
     'Connection': "Keep-Alive",
@@ -38,7 +39,7 @@ Hr = {
     'Expect': "100-continue",
     'X-Unity-Version': "2018.4.11f1",
     'X-GA': "v1 1",
-    'ReleaseVersion': "OB52"} # FIXED: OB52
+    'ReleaseVersion': "OB52"}
 
 # ---- Random Colores ----
 def get_random_color():
@@ -91,7 +92,10 @@ async def EncRypTMajoRLoGin(open_id, access_token):
     major_login.event_time = str(datetime.now())[:-7]
     major_login.game_name = "free fire"
     major_login.platform_id = 1
-    major_login.client_version = "1.120.1" # FIXED: Updated Version
+    
+    # FIXED: Updated Client Version for OB52
+    major_login.client_version = "1.120.1"
+    
     major_login.system_software = "Android OS 9 / API-28 (PQ3B.190801.10101846/G9650ZHU2ARC6)"
     major_login.system_hardware = "Handheld"
     major_login.telecom_operator = "Verizon"
@@ -132,7 +136,10 @@ async def EncRypTMajoRLoGin(open_id, access_token):
     major_login.channel_type = 3
     major_login.cpu_type = 2
     major_login.cpu_architecture = "64"
-    major_login.client_version_code = "2019120695" # FIXED: Updated Version Code
+    
+    # FIXED: Updated Version Code
+    major_login.client_version_code = "2019120695"
+    
     major_login.graphics_api = "OpenGLES2"
     major_login.supported_astc_bitset = 16383
     major_login.login_open_id_type = 4
@@ -630,8 +637,20 @@ async def MaiiiinE():
     OnLinePorTs = LoGinDaTaUncRypTinG.Online_IP_Port
     ChaTPorTs = LoGinDaTaUncRypTinG.AccountIP_Port
 
-    OnLineiP, OnLineporT = OnLinePorTs.split(":")
-    ChaTiP, ChaTporT = ChaTPorTs.split(":")
+    # --- FIX START: HANDLE MULTIPLE IPs & UNPACK ERROR ---
+    if "," in OnLinePorTs:
+        OnLinePorTs = OnLinePorTs.split(",")[0]
+    
+    if "," in ChaTPorTs:
+        ChaTPorTs = ChaTPorTs.split(",")[0]
+
+    try:
+        OnLineiP, OnLineporT = OnLinePorTs.split(":")
+        ChaTiP, ChaTporT = ChaTPorTs.split(":")
+    except ValueError:
+        print(f"Error Parsing Ports: Online={OnLinePorTs}, Chat={ChaTPorTs}")
+        return None
+    # --- FIX END ---
 
     acc_name = LoGinDaTaUncRypTinG.AccountName
     print(ToKen)

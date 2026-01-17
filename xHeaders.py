@@ -37,8 +37,8 @@ def equie_emote(JWT,url):
         "Content-Type": "application/x-www-form-urlencoded",
         "Expect": "100-continue",
         #"Host": "clientbp.ggblueshark.com",
-        "ReleaseVersion": "OB51",
-        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; G011A Build/PI)",
+        "ReleaseVersion": "OB52",
+        "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 10; SM-A515F Build/QP1A.190711.020)",
         "X-GA": "v1 1",
         "X-Unity-Version": "2018.4.11f1",
     }
@@ -74,7 +74,7 @@ def GeT_Name(uid , Token):
     url = "https://clientbp.common.ggbluefox.com/GetPlayerPersonalShow"
     headers = {
         'X-Unity-Version': '2018.4.11f1',
-        'ReleaseVersion': 'OB51',
+        'ReleaseVersion': 'OB52',
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-GA': 'v1 1',
         'Authorization': f'Bearer {GeTToK()}',
@@ -99,7 +99,7 @@ def GeT_PLayer_InFo(uid , Token):
     url = "https://clientbp.common.ggbluefox.com/GetPlayerPersonalShow"
     headers = {
         'X-Unity-Version': '2018.4.11f1',
-        'ReleaseVersion': 'OB50',
+        'ReleaseVersion': 'OB52',
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-GA': 'v1 1',
         'Authorization': f'Bearer {GeTToK()}',
@@ -188,7 +188,7 @@ def DeLet_Uid(id , Tok):
     url = 'https://clientbp.common.ggbluefox.com/RemoveFriend'
     headers = {
         'X-Unity-Version': '2018.4.11f1',
-        'ReleaseVersion': 'OB50',
+        'ReleaseVersion': 'OB52',
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-GA': 'v1 1',
         'Authorization': f'Bearer {Tok}',

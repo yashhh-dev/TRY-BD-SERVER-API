@@ -26,11 +26,11 @@ spam_chat_id = None
 spam_uid = None
 Spy = False
 Chat_Leave = False
+BOT_UID = None # Global variable initialize
 #------------------------------------------#
 
 app = Flask(__name__)
 
-# FIXED: Updated Header to OB52
 Hr = {
     'User-Agent': "Dalvik/2.1.0 (Linux; U; Android 11; ASUS_Z01QD Build/PI)",
     'Connection': "Keep-Alive",
@@ -92,10 +92,7 @@ async def EncRypTMajoRLoGin(open_id, access_token):
     major_login.event_time = str(datetime.now())[:-7]
     major_login.game_name = "free fire"
     major_login.platform_id = 1
-    
-    # FIXED: Updated Client Version for OB52
-    major_login.client_version = "1.120.1"
-    
+    major_login.client_version = "1.120.2"
     major_login.system_software = "Android OS 9 / API-28 (PQ3B.190801.10101846/G9650ZHU2ARC6)"
     major_login.system_hardware = "Handheld"
     major_login.telecom_operator = "Verizon"
@@ -136,10 +133,7 @@ async def EncRypTMajoRLoGin(open_id, access_token):
     major_login.channel_type = 3
     major_login.cpu_type = 2
     major_login.cpu_architecture = "64"
-    
-    # FIXED: Updated Version Code
-    major_login.client_version_code = "2019120695"
-    
+    major_login.client_version_code = "2019118695"
     major_login.graphics_api = "OpenGLES2"
     major_login.supported_astc_bitset = 16383
     major_login.login_open_id_type = 4
@@ -529,25 +523,34 @@ async def perform_emote(team_code: str, uids: list, emote_id: int):
         raise Exception("Bot not connected")
 
     try:
-        # 1. JOIN SQUAD (super fast)
+        # 1. JOIN SQUAD (Packet Send)
         EM = await GenJoinSquadsPacket(team_code, key, iv)
         await SEndPacKeT(None, online_writer, 'OnLine', EM)
-        await asyncio.sleep(0.12)  # minimal sync delay
+        
+        # Thoda wait karo taaki server join confirm kar le (0.3s best hai)
+        await asyncio.sleep(0.3) 
 
-        # 2. PERFORM EMOTE instantly
+        # 2. PERFORM EMOTE (Har player ke liye loop)
         for uid_str in uids:
             uid = int(uid_str)
+            # Emote packet
             H = await Emote_k(uid, emote_id, key, iv, region)
             await SEndPacKeT(None, online_writer, 'OnLine', H)
+            # Thoda sa gap taaki packet mix na ho
+            await asyncio.sleep(0.05) 
 
-        # 3. LEAVE SQUAD instantly (correct bot UID)
-        LV = await ExiT(BOT_UID, key, iv)
-        await SEndPacKeT(None, online_writer, 'OnLine', LV)
-        await asyncio.sleep(0.03)
+        # 3. LEAVE SQUAD (Correct UID ke sath)
+        # Ab ye BOT_UID sahi wala lega jo login se aaya hai
+        if BOT_UID:
+             LV = await ExiT(BOT_UID, key, iv)
+             await SEndPacKeT(None, online_writer, 'OnLine', LV)
+        else:
+             print("Error: BOT_UID not set, cannot leave!")
 
         return {"status": "success", "message": "Emote done & bot left instantly"}
 
     except Exception as e:
+        print(f"Error performing emote: {e}")
         raise Exception(f"Failed to perform emote: {str(e)}")
 
 
@@ -599,10 +602,9 @@ def run_flask():
 async def MaiiiinE():
     global loop, key, iv, region, BOT_UID
 
-    # BOT LOGIN UID
-    BOT_UID = int('14411935069')  # <-- FIXED BOT UID
-
-    Uid, Pw = '4401213804', '132A508CEE1C3F0164A7FCD6754AEEF32EE4384EE6071157D17B40F48667FD58'
+    # NOTE: Hardcoded BOT_UID removed. Will fetch automatically.
+    
+    Uid, Pw = '4468571543', '10_NAJMI_ADMIN_LOYVJ'
 
     open_id, access_token = await GeNeRaTeAccEss(Uid, Pw)
     if not open_id or not access_token:
@@ -622,6 +624,11 @@ async def MaiiiinE():
 
     ToKen = MajoRLoGinauTh.token
     TarGeT = MajoRLoGinauTh.account_uid
+    
+    # --- AUTO FIX: Set BOT_UID dynamically ---
+    BOT_UID = int(TarGeT)
+    # -----------------------------------------
+
     key = MajoRLoGinauTh.key
     iv = MajoRLoGinauTh.iv
     timestamp = MajoRLoGinauTh.timestamp
@@ -637,20 +644,8 @@ async def MaiiiinE():
     OnLinePorTs = LoGinDaTaUncRypTinG.Online_IP_Port
     ChaTPorTs = LoGinDaTaUncRypTinG.AccountIP_Port
 
-    # --- FIX START: HANDLE MULTIPLE IPs & UNPACK ERROR ---
-    if "," in OnLinePorTs:
-        OnLinePorTs = OnLinePorTs.split(",")[0]
-    
-    if "," in ChaTPorTs:
-        ChaTPorTs = ChaTPorTs.split(",")[0]
-
-    try:
-        OnLineiP, OnLineporT = OnLinePorTs.split(":")
-        ChaTiP, ChaTporT = ChaTPorTs.split(":")
-    except ValueError:
-        print(f"Error Parsing Ports: Online={OnLinePorTs}, Chat={ChaTPorTs}")
-        return None
-    # --- FIX END ---
+    OnLineiP, OnLineporT = OnLinePorTs.split(":")
+    ChaTiP, ChaTporT = ChaTPorTs.split(":")
 
     acc_name = LoGinDaTaUncRypTinG.AccountName
     print(ToKen)
